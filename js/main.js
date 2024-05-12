@@ -282,11 +282,6 @@ class king extends piece {
     }
 }
 
-const resetBoardButton = document.querySelector('.buttons button.resetBoard')
-const clearConsoleButton = document.querySelector('.buttons button.clearConsole')
-const clearBoardButton = document.querySelector('.buttons button.clearBoard')
-let board = new game()
-
 let newBoard = {
     'toMove': true,
     'whiteOnBottom': true,
@@ -314,6 +309,12 @@ let emptyBoard = {
     'row8': [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()],
     'selectedPieceLocation': undefined
 }
+
+const resetBoardButton = document.querySelector('.buttons button.resetBoard')
+const clearConsoleButton = document.querySelector('.buttons button.clearConsole')
+const clearBoardButton = document.querySelector('.buttons button.clearBoard')
+let board = new game()
+board = new game(emptyBoard.toMove, emptyBoard.whiteOnBottom, emptyBoard.row1, emptyBoard.row2, emptyBoard.row3, emptyBoard.row4, emptyBoard.row5, emptyBoard.row6, emptyBoard.row7, emptyBoard.row8, emptyBoard.selectedPieceLocation)
 
 emptyBoard = new game(emptyBoard.toMove, emptyBoard.whiteOnBottom, emptyBoard.row1, emptyBoard.row2, emptyBoard.row3, emptyBoard.row4, emptyBoard.row5, emptyBoard.row6, emptyBoard.row7, emptyBoard.row8, emptyBoard.selectedPieceLocation)
 newBoard = new game(newBoard.toMove, newBoard.whiteOnBottom, newBoard.row1, newBoard.row2, newBoard.row3, newBoard.row4, newBoard.row5, newBoard.row6, newBoard.row7, newBoard.row8, newBoard.selectedPieceLocation)
