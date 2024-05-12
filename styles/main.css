@@ -106,3 +106,5 @@ html, body {
 .white.bishop {background-image: url('../production/pieces/wb.png');}
 .white.king   {background-image: url('../production/pieces/wk.png');}
 .white.queen  {background-image: url('../production/pieces/wq.png');}
+
+.greyed {filter: opacity(0.75)}
