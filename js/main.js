@@ -51,6 +51,8 @@ class game {
             this.selectedPieceLocation = undefined
             this.wholeBoard = [this.row1, this.row2, this.row3, this.row4, this.row5, this.row6, this.row7, this.row8] // the above table of arrays
         }
+
+        this.display()
     }
 
     display() {
@@ -733,7 +735,7 @@ const resetBoardButton = document.querySelector('.buttons button.resetBoard')
 const clearConsoleButton = document.querySelector('.buttons button.clearConsole')
 const clearBoardButton = document.querySelector('.buttons button.clearBoard')
 let board = new game()
-board = new game(emptyBoard.toMove, emptyBoard.whiteOnBottom, emptyBoard.row1, emptyBoard.row2, emptyBoard.row3, emptyBoard.row4, emptyBoard.row5, emptyBoard.row6, emptyBoard.row7, emptyBoard.row8, emptyBoard.selectedPieceLocation)
+// board = new game(emptyBoard.toMove, emptyBoard.whiteOnBottom, emptyBoard.row1, emptyBoard.row2, emptyBoard.row3, emptyBoard.row4, emptyBoard.row5, emptyBoard.row6, emptyBoard.row7, emptyBoard.row8, emptyBoard.selectedPieceLocation)
 
 
 resetBoardButton.addEventListener("click", (e) => {
