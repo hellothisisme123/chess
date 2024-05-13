@@ -44,7 +44,7 @@ class game {
             this.row2 = [new pawn(false), new pawn(false),   new pawn(false),   new pawn(false),  new pawn(false), new pawn(false),   new pawn(false),   new pawn(false)]
             this.row3 = [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()]
             this.row4 = [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()]
-            this.row5 = [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()]
+            this.row5 = [new piece(), new piece(), new piece(), new queen(true), new piece(), new piece(), new piece(), new piece()]
             this.row6 = [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()]
             this.row7 = [new pawn(true), new pawn(true),   new pawn(true),   new pawn(true),  new pawn(true), new pawn(true),   new pawn(true),   new pawn(true)]
             this.row8 = [new rook(true), new knight(true), new bishop(true), new queen(true), new king(true), new bishop(true), new knight(true), new rook(true)]
@@ -122,9 +122,10 @@ class piece {
             
             availableMoves.forEach(move => {
                 if (cellRow == move[0] && cellCol == move[1]) {
-                    removeAllClasses(cell)
-                    cell.classList.add(this.getColorClass())
-                    cell.classList.add(this.getPieceName())
+                    // ----- Greyed selected possible moves -----
+                    // removeAllClasses(cell)
+                    // cell.classList.add(this.getColorClass())
+                    // cell.classList.add(this.getPieceName())
                     cell.classList.add('greyed')
                 }
             });
@@ -193,7 +194,9 @@ class pawn extends piece {
             // 2 blocks forward
             if (this.position[0] == 1 && !this.white && board.whiteOnBottom || this.position[0] == 6 && this.white && board.whiteOnBottom) {
                 if (board.wholeBoard[this.position[0] + direction][this.position[1]].white == undefined) {
-                    availableMoves.push([this.position[0] + 2 * direction, this.position[1]])
+                    if (board.wholeBoard[this.position[0] + 2 * direction][this.position[1]].white == undefined) {
+                        availableMoves.push([this.position[0] + 2 * direction, this.position[1]])
+                    }
                 }
             }
 
@@ -213,7 +216,7 @@ class pawn extends piece {
 }
 
 class rook extends piece {
-    constructor(white, position) {
+    constructor(white, position, hasMoved) {
         super(white, position)
     }
 
@@ -223,6 +226,93 @@ class rook extends piece {
 
     isEmpty() {
         return false
+    }
+
+    getAvailableMoves() {
+        console.log('\t', '\t', '----------Get Available Moves----------')
+        let availableMoves = []
+
+        if (board.toMove == this.white) { // only move when its your turn
+            let left = true
+            let lefti = 0
+            while (left) {                
+                lefti++
+                
+                if (this.position[1] - lefti >= 0) {
+                    if (board.wholeBoard[this.position[0]][this.position[1] - lefti].white == undefined) { // there is no 
+                        availableMoves.push([this.position[0], this.position[1] - lefti])
+                    } else if (board.wholeBoard[this.position[0]][this.position[1] - lefti].white != this.white) { // the piece intercepting is enemy
+                        left = false
+                        availableMoves.push([this.position[0], this.position[1] - lefti])
+                    } else { // the piece intercepting is ally
+                        left = false
+                    }
+                } else { // the edge of the board
+                    left = false
+                }
+            }
+
+            let right = true
+            let righti = 0
+            while (right) {                
+                righti++
+                
+                if (this.position[1] + righti <= 7) {
+                    if (board.wholeBoard[this.position[0]][this.position[1] + righti].white == undefined) { // there is no 
+                        availableMoves.push([this.position[0], this.position[1] + righti])
+                    } else if (board.wholeBoard[this.position[0]][this.position[1] + righti].white != this.white) { // the piece intercepting is enemy
+                        right = false
+                        availableMoves.push([this.position[0], this.position[1] + righti])
+                    } else { // the piece intercepting is ally
+                        right = false
+                    }
+                } else { // the edge of the board
+                    right = false
+                }
+            }
+
+            let up = true
+            let upi = 0
+            while (up) {                
+                upi++
+                
+                if (this.position[0] - upi >= 0) {
+                    if (board.wholeBoard[this.position[0] - upi][this.position[1]].white == undefined) { // there is no 
+                        availableMoves.push([this.position[0] - upi, this.position[1]])
+                    } else if (board.wholeBoard[this.position[0] - upi][this.position[1]].white != this.white) { // the piece intercepting is enemy
+                        up = false
+                        availableMoves.push([this.position[0] - upi, this.position[1]])
+                    } else { // the piece intercepting is ally
+                        up = false
+                    }
+                } else { // the edge of the board
+                    up = false
+                }
+            }
+
+            let down = true
+            let downi = 0
+            while (down) {                
+                downi++
+                
+                if (this.position[0] + downi <= 7) {
+                    if (board.wholeBoard[this.position[0] + downi][this.position[1]].white == undefined) { // there is no 
+                        availableMoves.push([this.position[0] + downi, this.position[1]])
+                    } else if (board.wholeBoard[this.position[0] + downi][this.position[1]].white != this.white) { // the piece intercepting is enemy
+                        down = false
+                        availableMoves.push([this.position[0] + downi, this.position[1]])
+                    } else { // the piece intercepting is ally
+                        down = false
+                    }
+                } else { // the edge of the board
+                    down = false
+                }
+            }
+        }
+        
+        console.log('\t', '\t', 'Available Moves:', availableMoves);
+        console.log('\t', '\t', '----------Get Available Moves----------')
+        return availableMoves // array of available move locations
     }
 }
 
@@ -238,6 +328,42 @@ class knight extends piece {
     isEmpty() {
         return false
     }
+
+    getAvailableMoves() {
+        console.log('\t', '\t', '----------Get Available Moves----------')
+        let availableMoves = []
+
+        if (board.toMove == this.white) { // only move when its your turn
+            if (this.position[0] + 2 <= 7 && this.position[1] + 1 <= 7) {
+                if (board.wholeBoard[this.position[0] + 2][this.position[1] + 1].white != this.white) availableMoves.push([this.position[0] + 2, this.position[1] + 1]) 
+            }
+            if (this.position[0] + 2 <= 7 && this.position[1] - 1 >= 0) {
+                if (board.wholeBoard[this.position[0] + 2][this.position[1] - 1].white != this.white) availableMoves.push([this.position[0] + 2, this.position[1] - 1]) 
+            }
+            if (this.position[0] - 2 >= 0 && this.position[1] + 1 <= 7) {
+                if (board.wholeBoard[this.position[0] - 2][this.position[1] + 1].white != this.white) availableMoves.push([this.position[0] - 2, this.position[1] + 1]) 
+            }
+            if (this.position[0] - 2 >= 0 && this.position[1] - 1 >= 0) {
+                if (board.wholeBoard[this.position[0] - 2][this.position[1] - 1].white != this.white) availableMoves.push([this.position[0] - 2, this.position[1] - 1]) 
+            }
+            if (this.position[0] + 1 <= 7 && this.position[1] + 2 <= 7) {
+                if (board.wholeBoard[this.position[0] + 1][this.position[1] + 2].white != this.white) availableMoves.push([this.position[0] + 1, this.position[1] + 2]) 
+            }
+            if (this.position[0] + 1 <= 7 && this.position[1] - 2 >= 0) {
+                if (board.wholeBoard[this.position[0] + 1][this.position[1] - 2].white != this.white) availableMoves.push([this.position[0] + 1, this.position[1] - 2]) 
+            }
+            if (this.position[0] - 1 >= 0 && this.position[1] + 2 <= 7) {
+                if (board.wholeBoard[this.position[0] - 1][this.position[1] + 2].white != this.white) availableMoves.push([this.position[0] - 1, this.position[1] + 2]) 
+            }
+            if (this.position[0] - 1 >= 0 && this.position[1] - 2 >= 0) {
+                if (board.wholeBoard[this.position[0] - 1][this.position[1] - 2].white != this.white) availableMoves.push([this.position[0] - 1, this.position[1] - 2]) 
+            }
+        }
+        
+        console.log('\t', '\t', 'Available Moves:', availableMoves);
+        console.log('\t', '\t', '----------Get Available Moves----------')
+        return availableMoves // array of available move locations
+    }
 }
 
 class bishop extends piece {
@@ -252,6 +378,93 @@ class bishop extends piece {
     isEmpty() {
         return false
     }
+
+    getAvailableMoves() {
+        console.log('\t', '\t', '----------Get Available Moves----------')
+        let availableMoves = []
+
+        if (board.toMove == this.white) { // only move when its your turn
+            let leftup = true
+            let leftupi = 0
+            while (leftup) {
+                leftupi++
+                
+                if (this.position[0] - leftupi >= 0 && this.position[1] - leftupi >= 0) {
+                    if (board.wholeBoard[this.position[0] - leftupi][this.position[1] - leftupi].white == undefined) { // there is no 
+                        availableMoves.push([this.position[0] - leftupi, this.position[1] - leftupi])
+                    } else if (board.wholeBoard[this.position[0] - leftupi][this.position[1] - leftupi].white != this.white) { // the piece intercepting is enemy
+                        leftup = false
+                        availableMoves.push([this.position[0] - leftupi, this.position[1] - leftupi])
+                    } else { // the piece intercepting is ally
+                        leftup = false
+                    }
+                } else { // the edge of the board
+                    leftup = false
+                }
+            }
+
+            let rightdown = true
+            let rightdowni = 0
+            while (rightdown) {                
+                rightdowni++
+                
+                if (this.position[0] + rightdowni <= 7 && this.position[1] + rightdowni <= 7) {
+                    if (board.wholeBoard[this.position[0] + rightdowni][this.position[1] + rightdowni].white == undefined) { // there is no 
+                        availableMoves.push([this.position[0] + rightdowni, this.position[1] + rightdowni])
+                    } else if (board.wholeBoard[this.position[0] + rightdowni][this.position[1] + rightdowni].white != this.white) { // the piece intercepting is enemy
+                        rightdown = false
+                        availableMoves.push([this.position[0] + rightdowni, this.position[1] + rightdowni])
+                    } else { // the piece intercepting is ally
+                        rightdown = false
+                    }
+                } else { // the edge of the board
+                    rightdown = false
+                }
+            }
+
+            let rightup = true
+            let rightupi = 0
+            while (rightup) {                
+                rightupi++
+                
+                if (this.position[0] - rightupi >= 0 && this.position[1] + rightupi <= 7) {
+                    if (board.wholeBoard[this.position[0] - rightupi][this.position[1] + rightupi].white == undefined) { // there is no 
+                        availableMoves.push([this.position[0] - rightupi, this.position[1] + rightupi])
+                    } else if (board.wholeBoard[this.position[0] - rightupi][this.position[1] + rightupi].white != this.white) { // the piece intercepting is enemy
+                        rightup = false
+                        availableMoves.push([this.position[0] - rightupi, this.position[1] + rightupi])
+                    } else { // the piece intercepting is ally
+                        rightup = false
+                    }
+                } else { // the edge of the board
+                    rightup = false
+                }
+            }
+
+            let leftdown = true
+            let leftdowni = 0
+            while (leftdown) {                
+                leftdowni++
+                
+                if (this.position[0] + leftdowni <= 7 && this.position[1] - leftdowni >= 0) {
+                    if (board.wholeBoard[this.position[0] + leftdowni][this.position[1] - leftdowni].white == undefined) { // there is no 
+                        availableMoves.push([this.position[0] + leftdowni, this.position[1] - leftdowni])
+                    } else if (board.wholeBoard[this.position[0] + leftdowni][this.position[1] - leftdowni].white != this.white) { // the piece intercepting is enemy
+                        leftdown = false
+                        availableMoves.push([this.position[0] + leftdowni, this.position[1] - leftdowni])
+                    } else { // the piece intercepting is ally
+                        leftdown = false
+                    }
+                } else { // the edge of the board
+                    leftdown = false
+                }
+            }
+        }
+        
+        console.log('\t', '\t', 'Available Moves:', availableMoves);
+        console.log('\t', '\t', '----------Get Available Moves----------')
+        return availableMoves // array of available move locations
+    }
 }
 
 class queen extends piece {
@@ -265,6 +478,169 @@ class queen extends piece {
 
     isEmpty() {
         return false
+    }
+
+    getAvailableMoves() {
+        console.log('\t', '\t', '----------Get Available Moves----------')
+        let availableMoves = []
+
+        if (board.toMove == this.white) { // only move when its your turn
+            let left = true
+            let lefti = 0
+            while (left) {                
+                lefti++
+                
+                if (this.position[1] - lefti >= 0) {
+                    if (board.wholeBoard[this.position[0]][this.position[1] - lefti].white == undefined) { // there is no 
+                        availableMoves.push([this.position[0], this.position[1] - lefti])
+                    } else if (board.wholeBoard[this.position[0]][this.position[1] - lefti].white != this.white) { // the piece intercepting is enemy
+                        left = false
+                        availableMoves.push([this.position[0], this.position[1] - lefti])
+                    } else { // the piece intercepting is ally
+                        left = false
+                    }
+                } else { // the edge of the board
+                    left = false
+                }
+            }
+
+            let right = true
+            let righti = 0
+            while (right) {                
+                righti++
+                
+                if (this.position[1] + righti <= 7) {
+                    if (board.wholeBoard[this.position[0]][this.position[1] + righti].white == undefined) { // there is no 
+                        availableMoves.push([this.position[0], this.position[1] + righti])
+                    } else if (board.wholeBoard[this.position[0]][this.position[1] + righti].white != this.white) { // the piece intercepting is enemy
+                        right = false
+                        availableMoves.push([this.position[0], this.position[1] + righti])
+                    } else { // the piece intercepting is ally
+                        right = false
+                    }
+                } else { // the edge of the board
+                    right = false
+                }
+            }
+
+            let up = true
+            let upi = 0
+            while (up) {                
+                upi++
+                
+                if (this.position[0] - upi >= 0) {
+                    if (board.wholeBoard[this.position[0] - upi][this.position[1]].white == undefined) { // there is no 
+                        availableMoves.push([this.position[0] - upi, this.position[1]])
+                    } else if (board.wholeBoard[this.position[0] - upi][this.position[1]].white != this.white) { // the piece intercepting is enemy
+                        up = false
+                        availableMoves.push([this.position[0] - upi, this.position[1]])
+                    } else { // the piece intercepting is ally
+                        up = false
+                    }
+                } else { // the edge of the board
+                    up = false
+                }
+            }
+
+            let down = true
+            let downi = 0
+            while (down) {                
+                downi++
+                
+                if (this.position[0] + downi <= 7) {
+                    if (board.wholeBoard[this.position[0] + downi][this.position[1]].white == undefined) { // there is no 
+                        availableMoves.push([this.position[0] + downi, this.position[1]])
+                    } else if (board.wholeBoard[this.position[0] + downi][this.position[1]].white != this.white) { // the piece intercepting is enemy
+                        down = false
+                        availableMoves.push([this.position[0] + downi, this.position[1]])
+                    } else { // the piece intercepting is ally
+                        down = false
+                    }
+                } else { // the edge of the board
+                    down = false
+                }
+            }
+
+            let leftup = true
+            let leftupi = 0
+            while (leftup) {                
+                leftupi++
+                
+                if (this.position[0] - leftupi >= 0 && this.position[1] - leftupi >= 0) {
+                    if (board.wholeBoard[this.position[0] - leftupi][this.position[1] - leftupi].white == undefined) { // there is no 
+                        availableMoves.push([this.position[0] - leftupi, this.position[1] - leftupi])
+                    } else if (board.wholeBoard[this.position[0] - leftupi][this.position[1] - leftupi].white != this.white) { // the piece intercepting is enemy
+                        leftup = false
+                        availableMoves.push([this.position[0] - leftupi, this.position[1] - leftupi])
+                    } else { // the piece intercepting is ally
+                        leftup = false
+                    }
+                } else { // the edge of the board
+                    leftup = false
+                }
+            }
+
+            let rightdown = true
+            let rightdowni = 0
+            while (rightdown) {                
+                rightdowni++
+                
+                if (this.position[0] + rightdowni <= 7 && this.position[1] + rightdowni <= 7) {
+                    if (board.wholeBoard[this.position[0] + rightdowni][this.position[1] + rightdowni].white == undefined) { // there is no 
+                        availableMoves.push([this.position[0] + rightdowni, this.position[1] + rightdowni])
+                    } else if (board.wholeBoard[this.position[0] + rightdowni][this.position[1] + rightdowni].white != this.white) { // the piece intercepting is enemy
+                        rightdown = false
+                        availableMoves.push([this.position[0] + rightdowni, this.position[1] + rightdowni])
+                    } else { // the piece intercepting is ally
+                        rightdown = false
+                    }
+                } else { // the edge of the board
+                    rightdown = false
+                }
+            }
+
+            let rightup = true
+            let rightupi = 0
+            while (rightup) {                
+                rightupi++
+                
+                if (this.position[0] - rightupi >= 0 && this.position[1] + rightupi <= 7) {
+                    if (board.wholeBoard[this.position[0] - rightupi][this.position[1] + rightupi].white == undefined) { // there is no 
+                        availableMoves.push([this.position[0] - rightupi, this.position[1] + rightupi])
+                    } else if (board.wholeBoard[this.position[0] - rightupi][this.position[1] + rightupi].white != this.white) { // the piece intercepting is enemy
+                        rightup = false
+                        availableMoves.push([this.position[0] - rightupi, this.position[1] + rightupi])
+                    } else { // the piece intercepting is ally
+                        rightup = false
+                    }
+                } else { // the edge of the board
+                    rightup = false
+                }
+            }
+
+            let leftdown = true
+            let leftdowni = 0
+            while (leftdown) {                
+                leftdowni++
+                
+                if (this.position[0] + leftdowni <= 7 && this.position[1] - leftdowni >= 0) {
+                    if (board.wholeBoard[this.position[0] + leftdowni][this.position[1] - leftdowni].white == undefined) { // there is no 
+                        availableMoves.push([this.position[0] + leftdowni, this.position[1] - leftdowni])
+                    } else if (board.wholeBoard[this.position[0] + leftdowni][this.position[1] - leftdowni].white != this.white) { // the piece intercepting is enemy
+                        leftdown = false
+                        availableMoves.push([this.position[0] + leftdowni, this.position[1] - leftdowni])
+                    } else { // the piece intercepting is ally
+                        leftdown = false
+                    }
+                } else { // the edge of the board
+                    leftdown = false
+                }
+            }
+        }
+        
+        console.log('\t', '\t', 'Available Moves:', availableMoves);
+        console.log('\t', '\t', '----------Get Available Moves----------')
+        return availableMoves // array of available move locations
     }
 }
 
@@ -282,19 +658,19 @@ class king extends piece {
     }
 }
 
-let newBoard = {
-    'toMove': true,
-    'whiteOnBottom': true,
-    'row1': [new rook(false), new knight(false), new bishop(false), new queen(false), new king(false), new bishop(false), new knight(false), new rook(false)],
-    'row2': [new pawn(false), new pawn(false),   new pawn(false),   new pawn(false),  new pawn(false), new pawn(false),   new pawn(false),   new pawn(false)],
-    'row3': [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()],
-    'row4': [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()],
-    'row5': [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()],
-    'row6': [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()],
-    'row7': [new pawn(true), new pawn(true),   new pawn(true),   new pawn(true),  new pawn(true), new pawn(true),   new pawn(true),   new pawn(true)],
-    'row8': [new rook(true), new knight(true), new bishop(true), new queen(true), new king(true), new bishop(true), new knight(true), new rook(true)],
-    'selectedPieceLocation': undefined
-}
+// let newBoard = {
+//     'toMove': true,
+//     'whiteOnBottom': true,
+//     'row1': [new rook(false), new knight(false), new bishop(false), new queen(false), new king(false), new bishop(false), new knight(false), new rook(false)],
+//     'row2': [new pawn(false), new pawn(false),   new pawn(false),   new pawn(false),  new pawn(false), new pawn(false),   new pawn(false),   new pawn(false)],
+//     'row3': [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()],
+//     'row4': [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()],
+//     'row5': [new piece(), new piece(), new piece(), new rook(true), new piece(), new piece(), new piece(), new piece()],
+//     'row6': [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()],
+//     'row7': [new pawn(true), new pawn(true),   new pawn(true),   new pawn(true),  new pawn(true), new pawn(true),   new pawn(true),   new pawn(true)],
+//     'row8': [new rook(true), new knight(true), new bishop(true), new queen(true), new king(true), new bishop(true), new knight(true), new rook(true)],
+//     'selectedPieceLocation': undefined
+// }
 
 let emptyBoard = {
     'toMove': true,
@@ -311,7 +687,7 @@ let emptyBoard = {
 }
 
 emptyBoard = new game(emptyBoard.toMove, emptyBoard.whiteOnBottom, emptyBoard.row1, emptyBoard.row2, emptyBoard.row3, emptyBoard.row4, emptyBoard.row5, emptyBoard.row6, emptyBoard.row7, emptyBoard.row8, emptyBoard.selectedPieceLocation)
-newBoard = new game(newBoard.toMove, newBoard.whiteOnBottom, newBoard.row1, newBoard.row2, newBoard.row3, newBoard.row4, newBoard.row5, newBoard.row6, newBoard.row7, newBoard.row8, newBoard.selectedPieceLocation)
+// newBoard = new game(newBoard.toMove, newBoard.whiteOnBottom, newBoard.row1, newBoard.row2, newBoard.row3, newBoard.row4, newBoard.row5, newBoard.row6, newBoard.row7, newBoard.row8, newBoard.selectedPieceLocation)
 
 const resetBoardButton = document.querySelector('.buttons button.resetBoard')
 const clearConsoleButton = document.querySelector('.buttons button.clearConsole')

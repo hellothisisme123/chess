@@ -93,18 +93,54 @@ html, body {
     }
 }
 
-.black.pawn   {background-image: url('../production/pieces/bp.png');}
-.black.rook   {background-image: url('../production/pieces/br.png');}
-.black.knight {background-image: url('../production/pieces/bn.png');}
-.black.bishop {background-image: url('../production/pieces/bb.png');}
-.black.king   {background-image: url('../production/pieces/bk.png');}
-.black.queen  {background-image: url('../production/pieces/bq.png');}
+.classic {
+    .black.pawn   {background-image: url('../production/classicPieces/bp.png');}
+    .black.rook   {background-image: url('../production/classicPieces/br.png');}
+    .black.knight {background-image: url('../production/classicPieces/bn.png');}
+    .black.bishop {background-image: url('../production/classicPieces/bb.png');}
+    .black.king   {background-image: url('../production/classicPieces/bk.png');}
+    .black.queen  {background-image: url('../production/classicPieces/bq.png');}
+    
+    .white.pawn   {background-image: url('../production/classicPieces/wp.png');}
+    .white.rook   {background-image: url('../production/classicPieces/wr.png');}
+    .white.knight {background-image: url('../production/classicPieces/wn.png');}
+    .white.bishop {background-image: url('../production/classicPieces/wb.png');}
+    .white.king   {background-image: url('../production/classicPieces/wk.png');}
+    .white.queen  {background-image: url('../production/classicPieces/wq.png');}
+}
 
-.white.pawn   {background-image: url('../production/pieces/wp.png');}
-.white.rook   {background-image: url('../production/pieces/wr.png');}
-.white.knight {background-image: url('../production/pieces/wn.png');}
-.white.bishop {background-image: url('../production/pieces/wb.png');}
-.white.king   {background-image: url('../production/pieces/wk.png');}
-.white.queen  {background-image: url('../production/pieces/wq.png');}
+.neo {
+    .black.pawn   {background-image: url('../production/neoPieces/bp.png');}
+    .black.rook   {background-image: url('../production/neoPieces/br.png');}
+    .black.knight {background-image: url('../production/neoPieces/bn.png');}
+    .black.bishop {background-image: url('../production/neoPieces/bb.png');}
+    .black.king   {background-image: url('../production/neoPieces/bk.png');}
+    .black.queen  {background-image: url('../production/neoPieces/bq.png');}
+    
+    .white.pawn   {background-image: url('../production/neoPieces/wp.png');}
+    .white.rook   {background-image: url('../production/neoPieces/wr.png');}
+    .white.knight {background-image: url('../production/neoPieces/wn.png');}
+    .white.bishop {background-image: url('../production/neoPieces/wb.png');}
+    .white.king   {background-image: url('../production/neoPieces/wk.png');}
+    .white.queen  {background-image: url('../production/neoPieces/wq.png');}
+}
 
-.greyed {filter: opacity(0.75)}
+.greyed {
+    filter: opacity(0.9);
+    position: relative;
+}
+
+.greyed::before {
+    z-index: -1;
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    display: block;
+    top: 50%;
+    left: 50%;
+    background-color: var(--black);
+    content: '';
+    translate: -50% -50%;
+    border-radius: 50%;
+    opacity: 0.35;
+}
