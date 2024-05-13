@@ -50,12 +50,20 @@ class game {
             this.row8 = [new rook(true), new knight(true), new bishop(true), new queen(true), new king(true), new bishop(true), new knight(true), new rook(true)]
             this.selectedPieceLocation = undefined
             this.wholeBoard = [this.row1, this.row2, this.row3, this.row4, this.row5, this.row6, this.row7, this.row8] // the above table of arrays
+
+            this.wholeBoard.forEach((array, row) => {
+                array.forEach((cell, col) => {
+                    cell.position = [row, col]
+                })
+            })
         }
 
         this.display()
     }
 
     display() {
+        this.selectedPieceLocation = undefined
+        
         const cells = document.querySelectorAll("table td")
         cells.forEach((cell, i) => {
             removeAllClasses(cell)
@@ -77,9 +85,16 @@ class game {
 class piece {
     constructor(
         white,
+        position,
         selected
     ) {
         this.white = white; // for example, true, would be a white piece
+        this.position = position;
+
+        if (this.position == undefined) {
+            // console.log(board);
+            // this.position 
+        }
     }
 
     getColorClass() {
@@ -96,22 +111,23 @@ class piece {
 
     clickCell(row, col, ele) {
         console.log('----------Click Cell----------')
+        this.position = [row, col]
+        
         if (board.wholeBoard[row][col].isEmpty() && !ele.classList.contains('greyed')) {
             board.display()
         } else if (ele.classList.contains('greyed')) {
             this.makeMove(row, col, ele)
         } else if (ele.classList.contains('black') || ele.classList.contains('white')) {
-            this.selectPiece(row, col, ele)
+            this.selectPiece(ele)
         }
 
         console.log('----------Click Cell----------')
     }
 
-    selectPiece(row, col, ele) {
+    selectPiece(ele) {
         // this is for if the user clicks on the piece
         console.log('\t', '----------Select Piece----------')
         board.display()
-        this.position = [row, col]
         board.selectedPieceLocation = this.position
         console.log('\t', this.position, this);
         
@@ -139,7 +155,9 @@ class piece {
     makeMove(row, col, ele) { // row, and col, are for the pieces new position
         console.log('\t', '\t', '----------Make Move----------')
         board.wholeBoard[row][col] = board.wholeBoard[board.selectedPieceLocation[0]][board.selectedPieceLocation[1]]
-        board.wholeBoard[board.selectedPieceLocation[0]][board.selectedPieceLocation[1]] = new piece()
+        board.wholeBoard[board.selectedPieceLocation[0]][board.selectedPieceLocation[1]] = new piece(undefined, [board.selectedPieceLocation[0], board.selectedPieceLocation[1]]);
+        board.wholeBoard[row][col].position = [row, col]
+        console.log('\t', '\t', this);
         board.display()
         board.toMove = !board.toMove
         console.log('\t', '\t', '----------Make Move----------')
@@ -700,43 +718,10 @@ class king extends piece {
     }
 }
 
-// let newBoard = {
-//     'toMove': true,
-//     'whiteOnBottom': true,
-//     'row1': [new rook(false), new knight(false), new bishop(false), new queen(false), new king(false), new bishop(false), new knight(false), new rook(false)],
-//     'row2': [new pawn(false), new pawn(false),   new pawn(false),   new pawn(false),  new pawn(false), new pawn(false),   new pawn(false),   new pawn(false)],
-//     'row3': [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()],
-//     'row4': [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()],
-//     'row5': [new piece(), new piece(), new piece(), new rook(true), new piece(), new piece(), new piece(), new piece()],
-//     'row6': [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()],
-//     'row7': [new pawn(true), new pawn(true),   new pawn(true),   new pawn(true),  new pawn(true), new pawn(true),   new pawn(true),   new pawn(true)],
-//     'row8': [new rook(true), new knight(true), new bishop(true), new queen(true), new king(true), new bishop(true), new knight(true), new rook(true)],
-//     'selectedPieceLocation': undefined
-// }
-
-let emptyBoard = {
-    'toMove': true,
-    'whiteOnBottom': true,
-    'row1': [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()],
-    'row2': [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()],
-    'row3': [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()],
-    'row4': [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()],
-    'row5': [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()],
-    'row6': [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()],
-    'row7': [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()],
-    'row8': [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()],
-    'selectedPieceLocation': undefined
-}
-
-emptyBoard = new game(emptyBoard.toMove, emptyBoard.whiteOnBottom, emptyBoard.row1, emptyBoard.row2, emptyBoard.row3, emptyBoard.row4, emptyBoard.row5, emptyBoard.row6, emptyBoard.row7, emptyBoard.row8, emptyBoard.selectedPieceLocation)
-// newBoard = new game(newBoard.toMove, newBoard.whiteOnBottom, newBoard.row1, newBoard.row2, newBoard.row3, newBoard.row4, newBoard.row5, newBoard.row6, newBoard.row7, newBoard.row8, newBoard.selectedPieceLocation)
-
 const resetBoardButton = document.querySelector('.buttons button.resetBoard')
 const clearConsoleButton = document.querySelector('.buttons button.clearConsole')
-const clearBoardButton = document.querySelector('.buttons button.clearBoard')
+const logBoardButton = document.querySelector('.buttons button.logBoard')
 let board = new game()
-// board = new game(emptyBoard.toMove, emptyBoard.whiteOnBottom, emptyBoard.row1, emptyBoard.row2, emptyBoard.row3, emptyBoard.row4, emptyBoard.row5, emptyBoard.row6, emptyBoard.row7, emptyBoard.row8, emptyBoard.selectedPieceLocation)
-
 
 resetBoardButton.addEventListener("click", (e) => {
     console.log("----------------------------Reset Board----------------------------")
@@ -746,20 +731,18 @@ resetBoardButton.addEventListener("click", (e) => {
     console.log("----------------------------Reset Board----------------------------")
 })
 
-if (clearBoardButton) {
-    clearBoardButton.addEventListener("click", (e) => {
-        console.log("----------------------------Clear Board----------------------------")
-        board = new game(emptyBoard.toMove, emptyBoard.whiteOnBottom, emptyBoard.row1, emptyBoard.row2, emptyBoard.row3, emptyBoard.row4, emptyBoard.row5, emptyBoard.row6, emptyBoard.row7, emptyBoard.row8, emptyBoard.selectedPieceLocation)
-        board.display()
-        console.log(board);
-        console.log("----------------------------Clear Board----------------------------")
-    })
-}
-
 if (clearConsoleButton) {
     clearConsoleButton.addEventListener("click", (e) => {
         console.clear()
         console.log("---------------------------Clear Console---------------------------")
+    })
+}
+
+if (logBoardButton) {
+    logBoardButton.addEventListener("click", (e) => {
+        console.log("-----------------------------Log Board-----------------------------")
+        console.log(board)
+        console.log("-----------------------------Log Board-----------------------------")
     })
 }
 
