@@ -708,9 +708,18 @@ class king extends piece {
             }
         }
 
-        availableMoves.forEach(move => {
-            
+        let moves = []
+        board.wholeBoard.forEach(row => {
+            row.forEach(cell => {
+                if (cell.getPieceName() != 'king' && cell.getPieceName() != 'empty') {
+                    // if (this.white != cell.white) {
+                        // console.log('\t', '\t', this.white, cell.white);
+                        cell.getAvailableMoves().forEach(move => moves.push(move))
+                    // }
+                }
+            })
         })
+        console.log('\t', '\t', 'Moves:', moves);
         
         console.log('\t', '\t', 'Available Moves:', availableMoves);
         console.log('\t', '\t', '----------Get Available Moves----------')
