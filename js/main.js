@@ -44,7 +44,7 @@ class game {
             this.row2 = [new pawn(false), new pawn(false),   new pawn(false),   new pawn(false),  new pawn(false), new pawn(false),   new pawn(false),   new pawn(false)]
             this.row3 = [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()]
             this.row4 = [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()]
-            this.row5 = [new piece(), new piece(), new piece(), new queen(true), new piece(), new piece(), new piece(), new piece()]
+            this.row5 = [new piece(), new piece(), new piece(), new king(true), new piece(), new piece(), new piece(), new piece()]
             this.row6 = [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()]
             this.row7 = [new pawn(true), new pawn(true),   new pawn(true),   new pawn(true),  new pawn(true), new pawn(true),   new pawn(true),   new pawn(true)]
             this.row8 = [new rook(true), new knight(true), new bishop(true), new queen(true), new king(true), new bishop(true), new knight(true), new rook(true)]
@@ -655,6 +655,46 @@ class king extends piece {
 
     isEmpty() {
         return false
+    }
+
+    getAvailableMoves() {
+        console.log('\t', '\t', '----------Get Available Moves----------')
+        let availableMoves = []
+
+        if (board.toMove == this.white) { // only move when its your turn
+            if (this.position[0] + 1 <= 7 && this.position[1] + 1 <= 7) {
+                if (board.wholeBoard[this.position[0] + 1][this.position[1] + 1].white != this.white) availableMoves.push([this.position[0] + 1, this.position[1] + 1])
+            }
+            if (this.position[0] + 1 <= 7 && this.position[1] - 1 >= 0) {
+                if (board.wholeBoard[this.position[0] + 1][this.position[1] - 1].white != this.white) availableMoves.push([this.position[0] + 1, this.position[1] - 1])
+            }
+            if (this.position[0] - 1 >= 0 && this.position[1] + 1 <= 7) {
+                if (board.wholeBoard[this.position[0] - 1][this.position[1] + 1].white != this.white) availableMoves.push([this.position[0] - 1, this.position[1] + 1])
+            }
+            if (this.position[0] + 1 <= 7) {
+                if (board.wholeBoard[this.position[0] + 1][this.position[1]].white != this.white) availableMoves.push([this.position[0] + 1, this.position[1]])
+            }
+            if (this.position[1] + 1 <= 7) {
+                if (board.wholeBoard[this.position[0]][this.position[1] + 1].white != this.white) availableMoves.push([this.position[0], this.position[1] + 1])
+            }
+            if (this.position[0] - 1 >= 0) {
+                if (board.wholeBoard[this.position[0] - 1][this.position[1]].white != this.white) availableMoves.push([this.position[0] - 1, this.position[1]])
+            }
+            if (this.position[1] - 1 >= 0) {
+                if (board.wholeBoard[this.position[0]][this.position[1] - 1].white != this.white) availableMoves.push([this.position[0], this.position[1] - 1])
+            }
+            if (this.position[0] - 1 >= 0 && this.position[1] - 1 >= 0) {
+                if (board.wholeBoard[this.position[0] - 1][this.position[1] - 1].white != this.white) availableMoves.push([this.position[0] - 1, this.position[1] - 1])
+            }
+        }
+
+        availableMoves.forEach(move => {
+            
+        })
+        
+        console.log('\t', '\t', 'Available Moves:', availableMoves);
+        console.log('\t', '\t', '----------Get Available Moves----------')
+        return availableMoves // array of available move locations
     }
 }
 
