@@ -42,7 +42,7 @@ class game {
             this.whiteOnBottom = true
             this.row1 = [new rook(false), new knight(false), new bishop(false), new queen(false), new king(false), new bishop(false), new knight(false), new rook(false)]
             this.row2 = [new pawn(false), new pawn(false),   new pawn(false),   new pawn(false),  new pawn(false), new pawn(false),   new pawn(false),   new pawn(false)]
-            this.row3 = [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new king(true), new piece()]
+            this.row3 = [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()]
             this.row4 = [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()]
             this.row5 = [new piece(), new piece(), new piece(), new king(true), new piece(), new piece(), new piece(), new piece()]
             this.row6 = [new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece(), new piece()]
@@ -131,7 +131,7 @@ class piece {
         board.selectedPieceLocation = this.position
         console.log('\t', this.position, this);
         
-        const availableMoves = this.getAvailableMoves(false)
+        const availableMoves = this.getAvailableMoves()
         
         const cells = document.querySelectorAll("table td")
         cells.forEach((cell, i) => {
@@ -183,19 +183,17 @@ class pawn extends piece {
         return 'pawn'
     }
 
-    getAvailableMoves(bypassToMove) {
+    getAvailableMoves() {
         console.log('\t', '\t', '----------Get Available Moves----------')
         let availableMoves = []
 
-        if (board.toMove == this.white || bypassToMove) { // only move when its your turn
+        if (board.toMove == this.white) { // only move when its your turn
             let direction = 1
             if (this.getColorClass() == "white") direction = -1
             
-            if (!bypassToMove) {
-                // one block forward
-                if (board.wholeBoard[this.position[0] + direction][this.position[1]].white == undefined) {
-                    availableMoves.push([this.position[0] + direction, this.position[1]])
-                }
+            // on block forward
+            if (board.wholeBoard[this.position[0] + direction][this.position[1]].white == undefined) {
+                availableMoves.push([this.position[0] + direction, this.position[1]])
             }
 
             // capture diagonal pieces
@@ -213,13 +211,11 @@ class pawn extends piece {
                 }
             }  
 
-            if (!bypassToMove) {
-                // 2 blocks forward
-                if (this.position[0] == 1 && !this.white && board.whiteOnBottom || this.position[0] == 6 && this.white && board.whiteOnBottom) {
-                    if (board.wholeBoard[this.position[0] + direction][this.position[1]].white == undefined) {
-                        if (board.wholeBoard[this.position[0] + 2 * direction][this.position[1]].white == undefined) {
-                            availableMoves.push([this.position[0] + 2 * direction, this.position[1]])
-                        }
+            // 2 blocks forward
+            if (this.position[0] == 1 && !this.white && board.whiteOnBottom || this.position[0] == 6 && this.white && board.whiteOnBottom) {
+                if (board.wholeBoard[this.position[0] + direction][this.position[1]].white == undefined) {
+                    if (board.wholeBoard[this.position[0] + 2 * direction][this.position[1]].white == undefined) {
+                        availableMoves.push([this.position[0] + 2 * direction, this.position[1]])
                     }
                 }
             }
@@ -252,11 +248,11 @@ class rook extends piece {
         return false
     }
 
-    getAvailableMoves(bypassToMove) {
+    getAvailableMoves() {
         console.log('\t', '\t', '----------Get Available Moves----------')
         let availableMoves = []
 
-        if (board.toMove == this.white || bypassToMove) { // only move when its your turn
+        if (board.toMove == this.white) { // only move when its your turn
             let left = true
             let lefti = 0
             while (left) {                
@@ -353,11 +349,11 @@ class knight extends piece {
         return false
     }
 
-    getAvailableMoves(bypassToMove) {
+    getAvailableMoves() {
         console.log('\t', '\t', '----------Get Available Moves----------')
         let availableMoves = []
 
-        if (board.toMove == this.white || bypassToMove) { // only move when its your turn
+        if (board.toMove == this.white) { // only move when its your turn
             if (this.position[0] + 2 <= 7 && this.position[1] + 1 <= 7) {
                 if (board.wholeBoard[this.position[0] + 2][this.position[1] + 1].white != this.white) availableMoves.push([this.position[0] + 2, this.position[1] + 1]) 
             }
@@ -403,11 +399,11 @@ class bishop extends piece {
         return false
     }
 
-    getAvailableMoves(bypassToMove) {
+    getAvailableMoves() {
         console.log('\t', '\t', '----------Get Available Moves----------')
         let availableMoves = []
 
-        if (board.toMove == this.white || bypassToMove) { // only move when its your turn
+        if (board.toMove == this.white) { // only move when its your turn
             let leftup = true
             let leftupi = 0
             while (leftup) {
@@ -504,11 +500,11 @@ class queen extends piece {
         return false
     }
 
-    getAvailableMoves(bypassToMove) {
+    getAvailableMoves() {
         console.log('\t', '\t', '----------Get Available Moves----------')
         let availableMoves = []
 
-        if (board.toMove == this.white || bypassToMove) { // only move when its your turn
+        if (board.toMove == this.white) { // only move when its your turn
             let left = true
             let lefti = 0
             while (left) {                
@@ -681,11 +677,11 @@ class king extends piece {
         return false
     }
 
-    getAvailableMoves(bypassToMove) {
+    getAvailableMoves() {
         console.log('\t', '\t', '----------Get Available Moves----------')
         let availableMoves = []
 
-        if (board.toMove == this.white || bypassToMove) { // only move when its your turn
+        if (board.toMove == this.white) { // only move when its your turn
             if (this.position[0] + 1 <= 7 && this.position[1] + 1 <= 7) {
                 if (board.wholeBoard[this.position[0] + 1][this.position[1] + 1].white != this.white) availableMoves.push([this.position[0] + 1, this.position[1] + 1])
             }
@@ -712,44 +708,22 @@ class king extends piece {
             }
         }
 
-        // this is for moves of other pieces, every possible move that's able to take another piece
-        let moves
-        if (!bypassToMove) {
-            moves = this.getOtherPiecesMoves()
-
-            moves.forEach(move => {
-                // availableMoves = 
-                console.log(availableMoves.filter(x => x[0] == move[0] && x[1] == move[1]));
-            });
-            // moves.forEach(move => {
-                // availableMoves.forEach(amove => {
-                    // if (amove[0] == move[0] && amove[1] == move[1]) availableMoves.
-                    // console.log(amove, move, amove[0] == move[0] && amove[1] == move[1]);
-                // });
-            // })
-        }
-
-        console.log('\t', '\t', 'Available Moves:', availableMoves);
-        console.log('\t', '\t', '----------Get Available Moves----------')
-        return moves // array of available move locations
-    }
-
-    getOtherPiecesMoves() { // this is for moves of other pieces, every possible move that's able to take another piece
         let moves = []
         board.wholeBoard.forEach(row => {
             row.forEach(cell => {
-                if (cell.getPieceName() != 'king' && cell.getPieceName() != 'empty' && cell.white == !this.white) {
-                    // console.log(cell.position, cell.white);
-                    cell.getAvailableMoves(true).forEach(move => {
-                        moves.push(move)
-                    })
+                if (cell.getPieceName() != 'king' && cell.getPieceName() != 'empty') {
+                    // if (this.white != cell.white) {
+                        // console.log('\t', '\t', this.white, cell.white);
+                        cell.getAvailableMoves().forEach(move => moves.push(move))
+                    // }
                 }
             })
         })
-        
         console.log('\t', '\t', 'Moves:', moves);
         
-        return moves
+        console.log('\t', '\t', 'Available Moves:', availableMoves);
+        console.log('\t', '\t', '----------Get Available Moves----------')
+        return availableMoves // array of available move locations
     }
 }
 
