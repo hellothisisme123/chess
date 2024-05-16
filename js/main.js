@@ -166,21 +166,28 @@ class piece {
     isEmpty() {
         return true
     }
+
+    checkCheck() {
+        board.wholeBoard.forEach(r => {
+            r.forEach(cell => {
+                console.log("cell:", cell);
+                
+            })
+        })
+    }
 }
 
 class pawn extends piece {
     constructor(white, position, lastPosition) {
         super(white, position)
     }
-    
-    move () {
-        // do stuff
-        
-        setBoard()
-    }
 
     getPieceName() {
         return 'pawn'
+    }
+
+    isEmpty() {
+        return false
     }
 
     getAvailableMoves() {
@@ -229,9 +236,28 @@ class pawn extends piece {
         console.log('\t', '\t', '----------Get Available Moves----------')
         return availableMoves // array of available move locations
     }
+    
+    getAvailableCaptures() { // any moves that the enemy king should not be able to make
+        // console.log('\t', '\t', '----------Get Available Captures----------')
+        let availableCaptures = []
 
-    isEmpty() {
-        return false
+        let direction = 1
+        if (this.getColorClass() == "white") direction = -1
+
+        // capture diagonal pieces
+        if (this.position[0] + 1 < 8 && this.position[0] - 1 >= 0) {
+            if (this.position[1] - 1 >= 0) {
+                availableCaptures.push([this.position[0] + direction, this.position[1] - 1])
+            }
+            
+            if (this.position[1] + 1 < 8) {
+                availableCaptures.push([this.position[0] + direction, this.position[1] + 1])
+            }
+        }
+        
+        console.log('\t', '\t', 'Available Captures:', availableCaptures);
+        console.log('\t', '\t', '----------Get Available Captures----------')
+        return availableCaptures // array of available move locations
     }
 }
 
@@ -334,6 +360,83 @@ class rook extends piece {
         console.log('\t', '\t', '----------Get Available Moves----------')
         return availableMoves // array of available move locations
     }
+
+    getAvailableCaptures() {
+        console.log('\t', '\t', '----------Get Available Captures----------')
+        let availableCaptures = []
+
+        let left = true
+        let lefti = 0
+        while (left) {                
+            lefti++
+            
+            if (this.position[1] - lefti >= 0) {
+                if (board.wholeBoard[this.position[0]][this.position[1] - lefti].white == undefined) { // there is no 
+                    availableCaptures.push([this.position[0], this.position[1] - lefti])
+                } else { // the piece intercepting is ally
+                    left = false
+                    availableCaptures.push([this.position[0], this.position[1] - lefti])
+                }
+            } else { // the edge of the board
+                left = false
+            }
+        }
+
+        let right = true
+        let righti = 0
+        while (right) {                
+            righti++
+            
+            if (this.position[1] + righti <= 7) {
+                if (board.wholeBoard[this.position[0]][this.position[1] + righti].white == undefined) { // there is no 
+                    availableCaptures.push([this.position[0], this.position[1] + righti])
+                } else { // the piece intercepting is ally
+                    right = false
+                    availableCaptures.push([this.position[0], this.position[1] + righti])
+                }
+            } else { // the edge of the board
+                right = false
+            }
+        }
+
+        let up = true
+        let upi = 0
+        while (up) {                
+            upi++
+            
+            if (this.position[0] - upi >= 0) {
+                if (board.wholeBoard[this.position[0] - upi][this.position[1]].white == undefined) { // there is no 
+                    availableCaptures.push([this.position[0] - upi, this.position[1]])
+                } else { // the piece intercepting is ally
+                    up = false
+                    availableCaptures.push([this.position[0] - upi, this.position[1]])
+                }
+            } else { // the edge of the board
+                up = false
+            }
+        }
+
+        let down = true
+        let downi = 0
+        while (down) {                
+            downi++
+            
+            if (this.position[0] + downi <= 7) {
+                if (board.wholeBoard[this.position[0] + downi][this.position[1]].white == undefined) { // there is no 
+                    availableCaptures.push([this.position[0] + downi, this.position[1]])
+                } else { // the piece intercepting is ally
+                    down = false
+                    availableCaptures.push([this.position[0] + downi, this.position[1]])
+                }
+            } else { // the edge of the board
+                down = false
+            }
+        }
+        
+        console.log('\t', '\t', 'Available Captures:', availableCaptures);
+        console.log('\t', '\t', '----------Get Available Captures----------')
+        return availableCaptures // array of available move locations
+    }
 }
 
 class knight extends piece {
@@ -383,6 +486,40 @@ class knight extends piece {
         console.log('\t', '\t', 'Available Moves:', availableMoves);
         console.log('\t', '\t', '----------Get Available Moves----------')
         return availableMoves // array of available move locations
+    }
+
+    getAvailableCaptures() {
+        console.log('\t', '\t', '----------Get Available Captures----------')
+        let availableCaptures = []
+
+        if (this.position[0] + 2 <= 7 && this.position[1] + 1 <= 7) {
+            availableCaptures.push([this.position[0] + 2, this.position[1] + 1]) 
+        }
+        if (this.position[0] + 2 <= 7 && this.position[1] - 1 >= 0) {
+            availableCaptures.push([this.position[0] + 2, this.position[1] - 1]) 
+        }
+        if (this.position[0] - 2 >= 0 && this.position[1] + 1 <= 7) {
+            availableCaptures.push([this.position[0] - 2, this.position[1] + 1]) 
+        }
+        if (this.position[0] - 2 >= 0 && this.position[1] - 1 >= 0) {
+            availableCaptures.push([this.position[0] - 2, this.position[1] - 1]) 
+        }
+        if (this.position[0] + 1 <= 7 && this.position[1] + 2 <= 7) {
+            availableCaptures.push([this.position[0] + 1, this.position[1] + 2]) 
+        }
+        if (this.position[0] + 1 <= 7 && this.position[1] - 2 >= 0) {
+            availableCaptures.push([this.position[0] + 1, this.position[1] - 2]) 
+        }
+        if (this.position[0] - 1 >= 0 && this.position[1] + 2 <= 7) {
+            availableCaptures.push([this.position[0] - 1, this.position[1] + 2]) 
+        }
+        if (this.position[0] - 1 >= 0 && this.position[1] - 2 >= 0) {
+            availableCaptures.push([this.position[0] - 1, this.position[1] - 2]) 
+        }
+    
+        console.log('\t', '\t', 'Available Captures:', availableCaptures);
+        console.log('\t', '\t', '----------Get Available Captures----------')
+        return availableCaptures // array of available move locations
     }
 }
 
@@ -485,6 +622,83 @@ class bishop extends piece {
         console.log('\t', '\t', '----------Get Available Moves----------')
         return availableMoves // array of available move locations
     }
+
+    getAvailableCaptures() {
+        console.log('\t', '\t', '----------Get Available Captures----------')
+        let availableCaptures = []
+
+        let leftup = true
+        let leftupi = 0
+        while (leftup) {
+            leftupi++
+            
+            if (this.position[0] - leftupi >= 0 && this.position[1] - leftupi >= 0) {
+                if (board.wholeBoard[this.position[0] - leftupi][this.position[1] - leftupi].white == undefined) { // there is no 
+                    availableCaptures.push([this.position[0] - leftupi, this.position[1] - leftupi])
+                } else { // the piece intercepting is ally
+                    leftup = false
+                    availableCaptures.push([this.position[0] - leftupi, this.position[1] - leftupi])
+                }
+            } else { // the edge of the board
+                leftup = false
+            }
+        }
+
+        let rightdown = true
+        let rightdowni = 0
+        while (rightdown) {                
+            rightdowni++
+            
+            if (this.position[0] + rightdowni <= 7 && this.position[1] + rightdowni <= 7) {
+                if (board.wholeBoard[this.position[0] + rightdowni][this.position[1] + rightdowni].white == undefined) { // there is no 
+                    availableCaptures.push([this.position[0] + rightdowni, this.position[1] + rightdowni])
+                } else { // the piece intercepting is ally
+                    rightdown = false
+                    availableCaptures.push([this.position[0] + rightdowni, this.position[1] + rightdowni])
+                }
+            } else { // the edge of the board
+                rightdown = false
+            }
+        }
+
+        let rightup = true
+        let rightupi = 0
+        while (rightup) {                
+            rightupi++
+            
+            if (this.position[0] - rightupi >= 0 && this.position[1] + rightupi <= 7) {
+                if (board.wholeBoard[this.position[0] - rightupi][this.position[1] + rightupi].white == undefined) { // there is no 
+                    availableCaptures.push([this.position[0] - rightupi, this.position[1] + rightupi])
+                } else { // the piece intercepting is ally
+                    rightup = false
+                    availableCaptures.push([this.position[0] - rightupi, this.position[1] + rightupi])
+                }
+            } else { // the edge of the board
+                rightup = false
+            }
+        }
+
+        let leftdown = true
+        let leftdowni = 0
+        while (leftdown) {                
+            leftdowni++
+            
+            if (this.position[0] + leftdowni <= 7 && this.position[1] - leftdowni >= 0) {
+                if (board.wholeBoard[this.position[0] + leftdowni][this.position[1] - leftdowni].white == undefined) { // there is no 
+                    availableCaptures.push([this.position[0] + leftdowni, this.position[1] - leftdowni])
+                } else { // the piece intercepting is ally
+                    leftdown = false
+                    availableCaptures.push([this.position[0] + leftdowni, this.position[1] - leftdowni])
+                }
+            } else { // the edge of the board
+                leftdown = false
+            }
+        }
+        
+        console.log('\t', '\t', 'Available Captures:', availableCaptures);
+        console.log('\t', '\t', '----------Get Available Captures----------')
+        return availableCaptures // array of available move locations
+    }
 }
 
 class queen extends piece {
@@ -501,166 +715,148 @@ class queen extends piece {
     }
 
     getAvailableMoves() {
-        console.log('\t', '\t', '----------Get Available Moves----------')
-        let availableMoves = []
+        console.log('\t', '\t', '----------Get Available Captures----------')
+        let availableCaptures = []
 
-        if (board.toMove == this.white) { // only move when its your turn
-            let left = true
-            let lefti = 0
-            while (left) {                
-                lefti++
-                
-                if (this.position[1] - lefti >= 0) {
-                    if (board.wholeBoard[this.position[0]][this.position[1] - lefti].white == undefined) { // there is no 
-                        availableMoves.push([this.position[0], this.position[1] - lefti])
-                    } else if (board.wholeBoard[this.position[0]][this.position[1] - lefti].white != this.white) { // the piece intercepting is enemy
-                        left = false
-                        availableMoves.push([this.position[0], this.position[1] - lefti])
-                    } else { // the piece intercepting is ally
-                        left = false
-                    }
-                } else { // the edge of the board
+        let left = true
+        let lefti = 0
+        while (left) {                
+            lefti++
+            
+            if (this.position[1] - lefti >= 0) {
+                if (board.wholeBoard[this.position[0]][this.position[1] - lefti].white == undefined) { // there is no 
+                    availableCaptures.push([this.position[0], this.position[1] - lefti])
+                } else { // the piece intercepting is ally
                     left = false
+                    availableCaptures.push([this.position[0], this.position[1] - lefti])
                 }
+            } else { // the edge of the board
+                left = false
             }
+        }
 
-            let right = true
-            let righti = 0
-            while (right) {                
-                righti++
-                
-                if (this.position[1] + righti <= 7) {
-                    if (board.wholeBoard[this.position[0]][this.position[1] + righti].white == undefined) { // there is no 
-                        availableMoves.push([this.position[0], this.position[1] + righti])
-                    } else if (board.wholeBoard[this.position[0]][this.position[1] + righti].white != this.white) { // the piece intercepting is enemy
-                        right = false
-                        availableMoves.push([this.position[0], this.position[1] + righti])
-                    } else { // the piece intercepting is ally
-                        right = false
-                    }
-                } else { // the edge of the board
+        let right = true
+        let righti = 0
+        while (right) {                
+            righti++
+            
+            if (this.position[1] + righti <= 7) {
+                if (board.wholeBoard[this.position[0]][this.position[1] + righti].white == undefined) { // there is no 
+                    availableCaptures.push([this.position[0], this.position[1] + righti])
+                } else { // the piece intercepting is ally
                     right = false
+                    availableCaptures.push([this.position[0], this.position[1] + righti])
                 }
+            } else { // the edge of the board
+                right = false
             }
+        }
 
-            let up = true
-            let upi = 0
-            while (up) {                
-                upi++
-                
-                if (this.position[0] - upi >= 0) {
-                    if (board.wholeBoard[this.position[0] - upi][this.position[1]].white == undefined) { // there is no 
-                        availableMoves.push([this.position[0] - upi, this.position[1]])
-                    } else if (board.wholeBoard[this.position[0] - upi][this.position[1]].white != this.white) { // the piece intercepting is enemy
-                        up = false
-                        availableMoves.push([this.position[0] - upi, this.position[1]])
-                    } else { // the piece intercepting is ally
-                        up = false
-                    }
-                } else { // the edge of the board
+        let up = true
+        let upi = 0
+        while (up) {                
+            upi++
+            
+            if (this.position[0] - upi >= 0) {
+                if (board.wholeBoard[this.position[0] - upi][this.position[1]].white == undefined) { // there is no 
+                    availableCaptures.push([this.position[0] - upi, this.position[1]])
+                } else { // the piece intercepting is ally
                     up = false
+                    availableCaptures.push([this.position[0] - upi, this.position[1]])
                 }
+            } else { // the edge of the board
+                up = false
             }
+        }
 
-            let down = true
-            let downi = 0
-            while (down) {                
-                downi++
-                
-                if (this.position[0] + downi <= 7) {
-                    if (board.wholeBoard[this.position[0] + downi][this.position[1]].white == undefined) { // there is no 
-                        availableMoves.push([this.position[0] + downi, this.position[1]])
-                    } else if (board.wholeBoard[this.position[0] + downi][this.position[1]].white != this.white) { // the piece intercepting is enemy
-                        down = false
-                        availableMoves.push([this.position[0] + downi, this.position[1]])
-                    } else { // the piece intercepting is ally
-                        down = false
-                    }
-                } else { // the edge of the board
+        let down = true
+        let downi = 0
+        while (down) {                
+            downi++
+            
+            if (this.position[0] + downi <= 7) {
+                if (board.wholeBoard[this.position[0] + downi][this.position[1]].white == undefined) { // there is no 
+                    availableCaptures.push([this.position[0] + downi, this.position[1]])
+                } else { // the piece intercepting is ally
                     down = false
+                    availableCaptures.push([this.position[0] + downi, this.position[1]])
                 }
+            } else { // the edge of the board
+                down = false
             }
+        }
 
-            let leftup = true
-            let leftupi = 0
-            while (leftup) {                
-                leftupi++
-                
-                if (this.position[0] - leftupi >= 0 && this.position[1] - leftupi >= 0) {
-                    if (board.wholeBoard[this.position[0] - leftupi][this.position[1] - leftupi].white == undefined) { // there is no 
-                        availableMoves.push([this.position[0] - leftupi, this.position[1] - leftupi])
-                    } else if (board.wholeBoard[this.position[0] - leftupi][this.position[1] - leftupi].white != this.white) { // the piece intercepting is enemy
-                        leftup = false
-                        availableMoves.push([this.position[0] - leftupi, this.position[1] - leftupi])
-                    } else { // the piece intercepting is ally
-                        leftup = false
-                    }
-                } else { // the edge of the board
+        let leftup = true
+        let leftupi = 0
+        while (leftup) {                
+            leftupi++
+            
+            if (this.position[0] - leftupi >= 0 && this.position[1] - leftupi >= 0) {
+                if (board.wholeBoard[this.position[0] - leftupi][this.position[1] - leftupi].white == undefined) { // there is no 
+                    availableCaptures.push([this.position[0] - leftupi, this.position[1] - leftupi])
+                } else { // the piece intercepting is ally
                     leftup = false
+                    availableCaptures.push([this.position[0] - leftupi, this.position[1] - leftupi])
                 }
+            } else { // the edge of the board
+                leftup = false
             }
+        }
 
-            let rightdown = true
-            let rightdowni = 0
-            while (rightdown) {                
-                rightdowni++
-                
-                if (this.position[0] + rightdowni <= 7 && this.position[1] + rightdowni <= 7) {
-                    if (board.wholeBoard[this.position[0] + rightdowni][this.position[1] + rightdowni].white == undefined) { // there is no 
-                        availableMoves.push([this.position[0] + rightdowni, this.position[1] + rightdowni])
-                    } else if (board.wholeBoard[this.position[0] + rightdowni][this.position[1] + rightdowni].white != this.white) { // the piece intercepting is enemy
-                        rightdown = false
-                        availableMoves.push([this.position[0] + rightdowni, this.position[1] + rightdowni])
-                    } else { // the piece intercepting is ally
-                        rightdown = false
-                    }
-                } else { // the edge of the board
+        let rightdown = true
+        let rightdowni = 0
+        while (rightdown) {                
+            rightdowni++
+            
+            if (this.position[0] + rightdowni <= 7 && this.position[1] + rightdowni <= 7) {
+                if (board.wholeBoard[this.position[0] + rightdowni][this.position[1] + rightdowni].white == undefined) { // there is no 
+                    availableCaptures.push([this.position[0] + rightdowni, this.position[1] + rightdowni])
+                } else { // the piece intercepting is ally
                     rightdown = false
+                    availableCaptures.push([this.position[0] + rightdowni, this.position[1] + rightdowni])
                 }
+            } else { // the edge of the board
+                rightdown = false
             }
+        }
 
-            let rightup = true
-            let rightupi = 0
-            while (rightup) {                
-                rightupi++
-                
-                if (this.position[0] - rightupi >= 0 && this.position[1] + rightupi <= 7) {
-                    if (board.wholeBoard[this.position[0] - rightupi][this.position[1] + rightupi].white == undefined) { // there is no 
-                        availableMoves.push([this.position[0] - rightupi, this.position[1] + rightupi])
-                    } else if (board.wholeBoard[this.position[0] - rightupi][this.position[1] + rightupi].white != this.white) { // the piece intercepting is enemy
-                        rightup = false
-                        availableMoves.push([this.position[0] - rightupi, this.position[1] + rightupi])
-                    } else { // the piece intercepting is ally
-                        rightup = false
-                    }
-                } else { // the edge of the board
+        let rightup = true
+        let rightupi = 0
+        while (rightup) {                
+            rightupi++
+            
+            if (this.position[0] - rightupi >= 0 && this.position[1] + rightupi <= 7) {
+                if (board.wholeBoard[this.position[0] - rightupi][this.position[1] + rightupi].white == undefined) { // there is no 
+                    availableCaptures.push([this.position[0] - rightupi, this.position[1] + rightupi])
+                } else { // the piece intercepting is ally
                     rightup = false
+                    availableCaptures.push([this.position[0] - rightupi, this.position[1] + rightupi])
                 }
+            } else { // the edge of the board
+                rightup = false
             }
+        }
 
-            let leftdown = true
-            let leftdowni = 0
-            while (leftdown) {                
-                leftdowni++
-                
-                if (this.position[0] + leftdowni <= 7 && this.position[1] - leftdowni >= 0) {
-                    if (board.wholeBoard[this.position[0] + leftdowni][this.position[1] - leftdowni].white == undefined) { // there is no 
-                        availableMoves.push([this.position[0] + leftdowni, this.position[1] - leftdowni])
-                    } else if (board.wholeBoard[this.position[0] + leftdowni][this.position[1] - leftdowni].white != this.white) { // the piece intercepting is enemy
-                        leftdown = false
-                        availableMoves.push([this.position[0] + leftdowni, this.position[1] - leftdowni])
-                    } else { // the piece intercepting is ally
-                        leftdown = false
-                    }
-                } else { // the edge of the board
+        let leftdown = true
+        let leftdowni = 0
+        while (leftdown) {                
+            leftdowni++
+            
+            if (this.position[0] + leftdowni <= 7 && this.position[1] - leftdowni >= 0) {
+                if (board.wholeBoard[this.position[0] + leftdowni][this.position[1] - leftdowni].white == undefined) { // there is no 
+                    availableCaptures.push([this.position[0] + leftdowni, this.position[1] - leftdowni])
+                } else { // the piece intercepting is ally
                     leftdown = false
+                    availableCaptures.push([this.position[0] + leftdowni, this.position[1] - leftdowni])
                 }
+            } else { // the edge of the board
+                leftdown = false
             }
         }
         
-        console.log('\t', '\t', 'Available Moves:', availableMoves);
-        console.log('\t', '\t', '----------Get Available Moves----------')
-        return availableMoves // array of available move locations
+        console.log('\t', '\t', 'Available Captures:', availableCaptures);
+        console.log('\t', '\t', '----------Get Available Captures----------')
+        return availableCaptures // array of available move locations
     }
 }
 
@@ -708,22 +904,43 @@ class king extends piece {
             }
         }
 
-        let moves = []
-        board.wholeBoard.forEach(row => {
-            row.forEach(cell => {
-                if (cell.getPieceName() != 'king' && cell.getPieceName() != 'empty') {
-                    // if (this.white != cell.white) {
-                        // console.log('\t', '\t', this.white, cell.white);
-                        cell.getAvailableMoves().forEach(move => moves.push(move))
-                    // }
-                }
-            })
-        })
-        console.log('\t', '\t', 'Moves:', moves);
-        
         console.log('\t', '\t', 'Available Moves:', availableMoves);
         console.log('\t', '\t', '----------Get Available Moves----------')
         return availableMoves // array of available move locations
+    }
+
+    getAvailableCaptures() {
+        console.log('\t', '\t', '----------Get Available Captures----------')
+        let availableCaptures = []
+
+        if (this.position[0] + 1 <= 7 && this.position[1] + 1 <= 7) {
+            availableCaptures.push([this.position[0] + 1, this.position[1] + 1])
+        }
+        if (this.position[0] + 1 <= 7 && this.position[1] - 1 >= 0) {
+            availableCaptures.push([this.position[0] + 1, this.position[1] - 1])
+        }
+        if (this.position[0] - 1 >= 0 && this.position[1] + 1 <= 7) {
+            availableCaptures.push([this.position[0] - 1, this.position[1] + 1])
+        }
+        if (this.position[0] + 1 <= 7) {
+            availableCaptures.push([this.position[0] + 1, this.position[1]])
+        }
+        if (this.position[1] + 1 <= 7) {
+            availableCaptures.push([this.position[0], this.position[1] + 1])
+        }
+        if (this.position[0] - 1 >= 0) {
+            availableCaptures.push([this.position[0] - 1, this.position[1]])
+        }
+        if (this.position[1] - 1 >= 0) {
+            availableCaptures.push([this.position[0], this.position[1] - 1])
+        }
+        if (this.position[0] - 1 >= 0 && this.position[1] - 1 >= 0) {
+            availableCaptures.push([this.position[0] - 1, this.position[1] - 1])
+        }
+
+        console.log('\t', '\t', 'Available Captures:', availableCaptures);
+        console.log('\t', '\t', '----------Get Available Captures----------')
+        return availableCaptures // array of available move locations
     }
 }
 
